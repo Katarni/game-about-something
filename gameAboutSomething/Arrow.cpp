@@ -3,7 +3,7 @@
 Arrow::Arrow() {
 	x = -100;
 	y = -100;
-	direction = STOP;
+	direction = RIGHT;
 	shot = false;
 	damage = 1;
 }
@@ -26,9 +26,6 @@ Arrow::Arrow(int x, int y, int damage, int direction) {
 	case -2:
 		this->direction = DOWN;
 		break;
-	default:
-		this->direction = STOP;
-		break;
 	}
 }
 
@@ -45,9 +42,6 @@ void Arrow::set_direction(int direction) {
 		break;
 	case -2:
 		this->direction = DOWN;
-		break;
-	default:
-		this->direction = STOP;
 		break;
 	}
 }

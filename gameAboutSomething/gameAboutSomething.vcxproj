@@ -130,21 +130,17 @@
   <ItemGroup>
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Creature.cpp" />
-    <ClCompile Include="Doors.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneOne.cpp" />
     <ClCompile Include="textFunctions.cpp" />
-    <ClCompile Include="Walls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Creature.h" />
-    <ClInclude Include="Doors.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SceneOne.h" />
     <ClInclude Include="textFunctions.h" />
-    <ClInclude Include="Walls.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

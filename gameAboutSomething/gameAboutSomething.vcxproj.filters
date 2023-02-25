@@ -24,12 +24,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Doors.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Walls.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Arrow.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -45,12 +39,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Doors.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Walls.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Arrow.h">

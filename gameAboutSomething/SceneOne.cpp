@@ -29,22 +29,13 @@ Arrow list_of_arrows[] = {
 	Arrow(), Arrow(), Arrow()
 };
 
-Doors list_of_doors[] = { 
-	Doors(13, 10), 
-	Doors(14, 10), 
-	Doors(15, 10) 
-};
+int doors_coordinates_x[] = { 13, 14, 15 };
+int doors_coordinates_y[] = { 10, 10, 10 };
+int doors_health[] = { 5, 5, 5 };
+bool doors_broken[] = { false, false, false };
 
-Walls list_of_walls[] = {
-	Walls(10, 5), Walls(11, 5), Walls(12, 5),
-	Walls(13, 5), Walls(14, 5), Walls(15, 5),
-	Walls(16, 5), Walls(17, 5), Walls(18, 5),
-	Walls(10, 6), Walls(10, 7), Walls(10, 8),
-	Walls(10, 9), Walls(18, 6), Walls(18, 7),
-	Walls(18, 8), Walls(18, 9), Walls(11, 9),
-	Walls(12, 9), Walls(16, 9), Walls(17, 9),
-	Walls(12, 10), Walls(16, 10)
-};
+int walls_coordinates_x[] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 10, 10, 10, 10, 18, 18, 18, 18, 11, 12, 16, 17, 12, 16};
+int walls_coordinates_y[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 7, 8, 9, 6, 7, 8, 9, 9, 9, 9, 9, 10, 10 };
 
 Creature list_of_creatures[] = {
 	Creature(70, 15, 10),
@@ -76,9 +67,9 @@ void hit() {
 		break;
 	}
 
-	for (int i = 0; i < sizeof(list_of_doors); i++) {
-		if (list_of_doors[i].x == creature_x && list_of_doors[i].y == creature_y) {
-			list_of_doors[i].health -= player_one.damage;
+	for (int i = 0; i < 3; i++) {
+		if (doors_coordinates_x[i] == creature_x && doors_coordinates_y[i] == creature_y) {
+			doors_health[i] -= player_one.damage;
 		}
 	}
 }
@@ -187,18 +178,18 @@ void arrow_hit_target(Arrow* arrow) /* Здесь что - то не так, о�
 	}
 	
 	// проверки на соответсвие
-	for (int i = 0; i < sizeof(list_of_doors); i++) {
-		if (list_of_doors[i].x == arrow->x && list_of_doors[i].y == arrow->y && !list_of_doors[i].broken) {
+	for (int i = 0; i < 3; i++) {
+		if (doors_coordinates_x[i] == arrow->x && doors_coordinates_y[i] == arrow->y && !doors_broken[i]) {
 			arrow->x = -100;
 			arrow->y = -100;
 			arrow->shot = false;
-			list_of_doors[i].health -= arrow->damage;
+			doors_health[i] -= arrow->damage;
 			return;
 		}
 	}
 	
-	for (int i = 0; i < sizeof(list_of_walls); i++) {
-		if (list_of_walls[i].x == arrow->x && list_of_walls[i].y == arrow->y) {
+	for (int i = 0; i < 23; i++) {
+		if (walls_coordinates_x[i] == arrow->x && walls_coordinates_y[i] == arrow->y) {
 			arrow->x = -100;
 			arrow->y = -100;
 			arrow->shot = false;
@@ -236,8 +227,8 @@ void draw() {
 				bool printed = false;
 
 				// рисуем стены
-				for (int k = 0; k < sizeof(list_of_walls); k++) {
-					if (i == list_of_walls[k].y && j == list_of_walls[k].x) {
+				for (int k = 0; k < 23; k++) {
+					if (i == walls_coordinates_y[k] && j == walls_coordinates_x[k]) {
 						cout << "#";
 						printed = true;
 					}
@@ -245,13 +236,13 @@ void draw() {
 
 				// рисуем двери
 				if (!printed) {
-					for (int k = 0; k < sizeof(list_of_doors); k++) {
-						if (i == list_of_doors[k].y && j == list_of_doors[k].x) {
-							if (list_of_doors[k].broken) {
+					for (int k = 0; k < 3; k++) {
+						if (i == doors_coordinates_y[k] && j == doors_coordinates_x[k]) {
+							if (doors_broken[k]) {
 								cout << "~";
 								printed = true;
 							}
-							else if (!list_of_doors[k].broken) {
+							else {
 								cout << "*";
 								printed = true;
 							}
@@ -326,9 +317,9 @@ void mechanics() {
 		game_end = true;
 	}
 
-	for (int i = 0; i < sizeof(list_of_doors); i++) {
-		if (list_of_doors[i].health <= 0) {
-			list_of_doors[i].broken = true;
+	for (int i = 0; i < 3; i++) {
+		if (doors_health[i] <= 0) {
+			doors_broken[i] = true;
 		}
 	}
 
@@ -350,7 +341,7 @@ void mechanics() {
 
 	// проверка на стены зданий
 	for (int i = 0; i < 23; i++) {
-		if (list_of_walls[i].x == player_one.coordinates_x && list_of_walls[i].y == player_one.coordinates_y) {
+		if (walls_coordinates_x[i] == player_one.coordinates_x && walls_coordinates_y[i] == player_one.coordinates_y) {
 			switch (previous_action)
 			{
 			case LEFT:
@@ -370,9 +361,9 @@ void mechanics() {
 	}
 
 	// проверка на двери
-	for (int i = 0; i < sizeof(list_of_doors); i++) {
-		if (list_of_doors[i].x == player_one.coordinates_x && list_of_doors[i].y == player_one.coordinates_y) {
-			if (!list_of_doors[i].broken) /* дверь не сломана */ {
+	for (int i = 0; i < 3; i++) {
+		if (doors_coordinates_x[i] == player_one.coordinates_x && doors_coordinates_y[i] == player_one.coordinates_y) {
+			if (!doors_broken[i]) /* дверь не сломана */ {
 				switch (previous_action)
 				{
 				case LEFT:
@@ -423,5 +414,5 @@ bool main_scene() {
 		* в методе drow() печать снарядов иногда печатает символы '~' вместо 'o'
 		* объекты типа Creatures выводятся методом drow(), как двери, при смерти объекта он меняет облик на сломанную дверь,
 			при этом свойства объекта, такие как размер здоровья не соответствует объекту Creatures 
-		* стрелы нехотят летать вверх
+		* стрелы нехотят летать влево
 */

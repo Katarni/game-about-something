@@ -10,7 +10,7 @@ struct Arrow {
 	int y;
 	int damage;
 	bool shot;
-	enum directions {LEFT, RIGHT, UP, DOWN, STOP};
+	enum directions { LEFT, RIGHT, UP, DOWN };
 	directions direction;
 };
 
