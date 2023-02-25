@@ -2,8 +2,6 @@
 #include "Player.h"
 #include <iostream>
 #include <conio.h>
-#include "Doors.h"
-#include "Walls.h"
 #include "Creature.h"
 
 using namespace std;
