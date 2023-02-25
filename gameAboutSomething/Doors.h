@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 struct Doors {
 	Doors(int x, int y);
 
