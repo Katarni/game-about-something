@@ -185,7 +185,7 @@ void arrow_hit_target(Arrow* arrow) /* Здесь что - то не так, о�
 		target_y = arrow->y + 1;
 		break;
 	}
-
+	
 	// проверки на соответсвие
 	for (int i = 0; i < sizeof(list_of_doors); i++) {
 		if (list_of_doors[i].x == arrow->x && list_of_doors[i].y == arrow->y && !list_of_doors[i].broken) {
@@ -196,7 +196,7 @@ void arrow_hit_target(Arrow* arrow) /* Здесь что - то не так, о�
 			return;
 		}
 	}
-
+	
 	for (int i = 0; i < sizeof(list_of_walls); i++) {
 		if (list_of_walls[i].x == arrow->x && list_of_walls[i].y == arrow->y) {
 			arrow->x = -100;
@@ -205,7 +205,7 @@ void arrow_hit_target(Arrow* arrow) /* Здесь что - то не так, о�
 			return;
 		}
 	}
-
+	
 	if (arrow->x < 1 || arrow->y < 0 || arrow->x > win_width - 1 || arrow->y > win_height - 1) {
 		arrow->x = -100;
 		arrow->y = -100;
