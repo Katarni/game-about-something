@@ -7,7 +7,7 @@ Player::Player() {
 	this->damage = 2;
 }
 
-Player::Player(int coordinates_x, int coordinates_y, int health, int damage) {
+Player::Player(int coordinates_x, int coordinates_y, double health, int damage) {
 	this->coordinates_x = coordinates_x;
 	this->coordinates_y = coordinates_y;
 	this->health = health;

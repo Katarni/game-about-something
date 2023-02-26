@@ -5,8 +5,8 @@ public:
 	Cat(int x, int y, std::string name);
 
 	std::string name;
-	int x;
-	int y;
+	int coordinates_x;
+	int coordinates_y;
 	int health;
 	bool dead;
 };
