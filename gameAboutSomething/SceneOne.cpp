@@ -184,7 +184,7 @@ void help_me_doctor() /* вызывается при нажатии на 'H' п�
 	}
 }
 
-void help_from_doctor() /* работает всегда, проверяет рядом ли с игоком, если да, то лечит. Так жа отправляет котика домой, если лечение не требуется*/ {
+void help_from_doctor() /* работает всегда, проверяет рядом ли с игоком, если да, то лечит. Так жe отправляет котика домой, если лечение не требуется*/ {
 	if (player_one.health >= 85) {
 		doctor.coordinates_x = 14;
 		doctor.coordinates_y = 7;
@@ -219,24 +219,27 @@ void help_from_doctor() /* работает всегда, проверяет р�
 	}
 }
 
-// овечки тоже ходят
+// овечки тоже ходят, но не всегда
 void sheeps_move(Sheeps* sheep) {
-	int direction = rand() % 4;
+	int is_move = rand() % 100;
+	if (is_move >= 75) {
+		int direction = rand() % 4;
 
-	switch (direction)
-	{
-	case 0:
-		sheep->x += 1;
-		break;
-	case 1:
-		sheep->x -= 1;
-		break;
-	case 2:
-		sheep->y += 1;
-		break;
-	case 3:
-		sheep->y -= 1;
-		break;
+		switch (direction)
+		{
+		case 0:
+			sheep->x += 1;
+			break;
+		case 1:
+			sheep->x -= 1;
+			break;
+		case 2:
+			sheep->y += 1;
+			break;
+		case 3:
+			sheep->y -= 1;
+			break;
+		}
 	}
 }
 
@@ -370,9 +373,59 @@ void is_step_free() {
 		}
 	}
 
+	// проверка на забор
+	for (int i = 0; i < 38; i++) {
+		if (fences_coordinates_x[i] == player_one.coordinates_x && fences_coordinates_y[i] == player_one.coordinates_y) {
+			switch (previous_action)
+			{
+			case LEFT:
+				player_one.coordinates_x++;
+				break;
+			case RIGHT:
+				player_one.coordinates_x--;
+				break;
+			case DOWN:
+				player_one.coordinates_y--;
+				break;
+			case UP:
+				player_one.coordinates_y++;
+				break;
+			}
+		}
+	}
+
 	// Овечки
 
+	for (int j = 0; j < 1; j++) {
+		if (list_of_sheeps[j].x < 1) {
+			list_of_sheeps[j].x = 1;
+		}
+		if (list_of_sheeps[j].y < 0) {
+			list_of_sheeps[j].y = 0;
+		}
+		if (list_of_sheeps[j].x > win_width - 1) {
+			list_of_sheeps[j].x = win_width - 1;
+		}
+		if (list_of_sheeps[j].y > win_height - 1) {
+			list_of_sheeps[j].y = win_height - 1;
+		}
 
+		// проверка на стены зданий
+		for (int i = 0; i < 21; i++) {
+			if (walls_coordinates_x[i] == list_of_sheeps[j].x && walls_coordinates_y[i] == list_of_sheeps[j].y) {
+				sheeps_move(&list_of_sheeps[j]);
+			}
+		}
+
+		// проверка на двери
+		for (int i = 0; i < 3; i++) {
+			if (doors_coordinates_x[i] == list_of_sheeps[j].x && doors_coordinates_y[i] == list_of_sheeps[j].y) {
+				if (!doors_broken[i]) /* дверь не сломана */ {
+					sheeps_move(&list_of_sheeps[j]);
+				}
+			}
+		}
+	}
 }
 
 void draw() {
@@ -548,7 +601,7 @@ void mechanics() {
 
 	for (int i = 0; i < 1; i++) {
 		if (!list_of_sheeps[i].dead) {
-			//sheeps_move(&list_of_sheeps[i]);
+			sheeps_move(&list_of_sheeps[i]);
 		}
 	}
 

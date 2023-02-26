@@ -16,7 +16,7 @@ void help_me_doctor();
 
 void help_from_doctor();
 
-void sheeps_move(Sheeps* sheep);
+void sheeps_move();
 
 void arrows_move(Arrow* arrow);
 
