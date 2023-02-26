@@ -51,12 +51,14 @@ int walls_coordinates_y[] = {
 int fences_coordinates_x[] = {
 	8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 
-	25, 25, 25, 25, 25, 25, 25, 25, 25, 25
+	25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
+	9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 };
 int fences_coordinates_y[] = {
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,  
 	4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-	4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
+	13, 13, 13, 13, 13, 13, 13, 13, 13, 13
 };
 
 Sheeps sheep_one(22, 11);
@@ -302,6 +304,15 @@ void arrow_hit_target(Arrow* arrow) {
 			return;
 		}
 	}
+
+	for (int i = 0; i < 48; i++) {
+		if (fences_coordinates_x[i] == arrow->x && fences_coordinates_y[i] == arrow->y) {
+			arrow->x = -100;
+			arrow->y = -100;
+			arrow->shot = false;
+			return;
+		}
+	}
 	
 	if (arrow->x < 1 || arrow->y < 0 || arrow->x > win_width - 1 || arrow->y > win_height - 1) {
 		arrow->x = -100;
@@ -374,7 +385,7 @@ void is_step_free() {
 	}
 
 	// проверка на забор
-	for (int i = 0; i < 38; i++) {
+	for (int i = 0; i < 48; i++) {
 		if (fences_coordinates_x[i] == player_one.coordinates_x && fences_coordinates_y[i] == player_one.coordinates_y) {
 			switch (previous_action)
 			{
@@ -454,7 +465,7 @@ void draw() {
 				bool printed = false;
 
 				if (!printed) {
-					for (int k = 0; k < 38; k++) /* вывод забора */ {
+					for (int k = 0; k < 48; k++) /* вывод забора */ {
 						if (i == fences_coordinates_y[k] && j == fences_coordinates_x[k]) {
 							cout << "\\";
 							printed = true;
