@@ -30,6 +30,12 @@
     <ClCompile Include="Creature.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Sheeps.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Cat.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
     <ClCompile Include="textFunctions.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -48,6 +54,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="textFunctions.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Sheeps.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Cat.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

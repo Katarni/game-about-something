@@ -12,6 +12,8 @@ int win_height = 25;
 
 Player player_one(win_width / 2, win_height / 2, 100, 2); // создание игрока
 
+Cat dr_oppenheimer(14, 7, "Dr. Oppenheimer"); // создание котика
+
 // список действий
 enum actions { STOP, LEFT, RIGHT, DOWN, UP, SHOT, HIT };
 actions action = STOP;
@@ -32,14 +34,42 @@ int doors_coordinates_y[] = { 10, 10, 10 };
 int doors_health[] = { 5, 5, 5 };
 bool doors_broken[] = { false, false, false };
 
-int walls_coordinates_x[] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 10, 10, 10, 10, 18, 18, 18, 18, 11, 12, 16, 17, 12, 16};
-int walls_coordinates_y[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 7, 8, 9, 6, 7, 8, 9, 9, 9, 9, 9, 10, 10 };
+// меняешь координаты? а циклы поменять не забыл?
+int walls_coordinates_x[] = {
+	10, 11, 12, 13, 14, 15, 16, 17, 18, 
+	10, 10, 10, 10, 
+	18, 18, 18, 18, 
+	11, 12, 16, 17, 
+	12, 16
+};
+int walls_coordinates_y[] = { 
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 
+	6, 7, 8, 9, 
+	6, 7, 8, 9, 
+	9, 9, 9, 9, 
+	10, 10 
+};
 
-Creature list_of_creatures[] = {
+int fences_coordinates_x[] = {
+	8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 
+	25, 25, 25, 25, 25, 25, 25, 25, 25, 25
+};
+int fences_coordinates_y[] = {
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,  
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+};
+
+Sheeps list_of_sheeps[] = {
+	Sheeps(20, 12)
+};
+
+/*Creature list_of_creatures[] = {
 	Creature(70, 15, 10),
 	Creature(55, 5, 10),
 	Creature(30, 20, 10)
-};
+};*/
 
 // удар
 void hit() {
@@ -135,6 +165,25 @@ void player_move() {
 	}
 }
 
+// овечки тоже ходят
+void sheeps_move(Sheeps* sheep) {
+	int direction = rand() % 4;
+
+	switch (direction)
+	{
+	case 0:
+		sheep->x += 1;
+		break;
+	case 1:
+		sheep->x -= 1;
+		break;
+	case 2:
+		sheep->y += 1;
+	case 3:
+		sheep->y -= 1;
+	}
+}
+
 // полет стрел
 void arrows_move(Arrow* arrow) {
 	switch (arrow->direction) {
@@ -224,14 +273,25 @@ void draw() {
 			else {
 				bool printed = false;
 
-				// рисуем стены
-				for (int k = 0; k < 23; k++) {
-					if (i == walls_coordinates_y[k] && j == walls_coordinates_x[k]) {
-						cout << "#";
-						printed = true;
+				if (!printed) {
+					for (int k = 0; k < 38; k++) /* вывод забора */ {
+						if (i == fences_coordinates_y[k] && j == fences_coordinates_x[k]) {
+							cout << "\\";
+							printed = true;
+						}
 					}
 				}
 
+				// рисуем стены
+				if (!printed) {
+					for (int k = 0; k < 23; k++) {
+						if (i == walls_coordinates_y[k] && j == walls_coordinates_x[k]) {
+							cout << "#";
+							printed = true;
+						}
+					}
+				}
+				
 				// рисуем двери
 				if (!printed) {
 					for (int k = 0; k < 3; k++) {
@@ -241,16 +301,16 @@ void draw() {
 								printed = true;
 							}
 							else {
-								cout << "*";
+								cout << "\"";
 								printed = true;
 							}
 						}
 					}
 				}
-
+				/*
 				// рисуем существ
 				if (!printed) {
-					for (int k = 0; k < sizeof(list_of_creatures); k++) {
+					for (int k = 0; k < 3; k++) {
 						if (j == list_of_creatures[k].x && list_of_creatures[k].y == i) {
 							if (!list_of_creatures[k].dead) {
 								cout << "M";
@@ -258,13 +318,30 @@ void draw() {
 							}
 						}
 					}
-				}
+				}*/
 
 				// рисуем стрелы
 				if (!printed) {
-					for (int k = 0; k < sizeof(list_of_arrows); k++) /* и здесь тоже отображение валится, смотреть кометрарий в конце */ {
+					for (int k = 0; k < sizeof(list_of_arrows); k++) {
 						if (i == list_of_arrows[k].y && j == list_of_arrows[k].x && list_of_arrows[k].shot) {
-							cout << "o";
+							switch (list_of_arrows[k].direction)
+							{
+							case LEFT:
+								cout << ">";
+								break;
+							case RIGHT:
+								cout << "^";
+								break;
+							case UP:
+								cout << "<";
+								break;
+							case DOWN:
+								cout << "v";
+								break;
+							default:
+								cout << "o";
+								break;
+							}
 							printed = true;
 						}
 					}
@@ -322,6 +399,12 @@ void mechanics() {
 	}
 
 	player_move();
+
+	for (int i = 0; i < 1; i++) {
+		if (!list_of_sheeps[i].dead) {
+			sheeps_move(&list_of_sheeps[i]);
+		}
+	}
 
 	// проверка на границы карты
 	if (player_one.coordinates_x < 1) {
@@ -407,10 +490,11 @@ bool main_scene() {
 }
 
 /*
+* 
 	Ошибочки:
-		* метод arrow_hit_target() ломает отображение стен и еще чего-то
-		* в методе drow() печать снарядов иногда печатает символы '~' вместо 'o'
-		* объекты типа Creatures выводятся методом drow(), как двери, при смерти объекта он меняет облик на сломанную дверь,
-			при этом свойства объекта, такие как размер здоровья не соответствует объекту Creatures 
 		* стрелы нехотят летать влево
+
+	Коментарии:
+		* во всех преборных циклах указаны значения длины списков константой, а не функцией, потому что иначе некорректно отображаются
+	
 */

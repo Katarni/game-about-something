@@ -1,5 +1,6 @@
 ﻿#pragma once
-struct Creature {
+class Creature {
+public:
 	Creature(int x, int y, int health);
 
 	int x;

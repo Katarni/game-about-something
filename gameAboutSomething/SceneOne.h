@@ -1,12 +1,16 @@
 ﻿#pragma once
 #include "Player.h"
 #include "Arrow.h"
+#include "Sheeps.h"
+#include "Cat.h"
 
 void hit();
 
 void shot();
 
 void player_move();
+
+void sheeps_move(Sheeps* sheep);
 
 void arrows_move(Arrow* arrow);
 

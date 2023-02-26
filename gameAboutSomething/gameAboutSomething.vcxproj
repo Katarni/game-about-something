@@ -129,17 +129,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Arrow.cpp" />
+    <ClCompile Include="Cat.cpp" />
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneOne.cpp" />
+    <ClCompile Include="Sheeps.cpp" />
     <ClCompile Include="textFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arrow.h" />
+    <ClInclude Include="Cat.h" />
     <ClInclude Include="Creature.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SceneOne.h" />
+    <ClInclude Include="Sheeps.h" />
     <ClInclude Include="textFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
