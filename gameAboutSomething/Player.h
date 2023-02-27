@@ -1,4 +1,7 @@
 ﻿#pragma once
+
+enum actions { STOP, LEFT, RIGHT, DOWN, UP, SHOT, HIT, HEALTH, TEST };
+
 class Player {
 public:
 	Player();

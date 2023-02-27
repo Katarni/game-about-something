@@ -26,6 +26,8 @@ Arrow::Arrow(int x, int y, int damage, int direction) {
 	case -2:
 		this->direction = DOWN;
 		break;
+	default:
+		this->direction = UP;
 	}
 }
 
@@ -42,6 +44,23 @@ void Arrow::set_direction(int direction) {
 		break;
 	case -2:
 		this->direction = DOWN;
+		break;
+	}
+}
+
+void Arrow::arrow_move() {
+	switch (this->direction) {
+	case LEFT:
+		this->x -= 1; // здесь все правильно, иначе не работает
+		break;
+	case RIGHT:
+		this->x += 1; // здесь все правильно, иначе не работает
+		break;
+	case UP:
+		this->y -= 1; // здесь не работает
+		break;
+	case DOWN:
+		this->y += 1; // здесь все правильно, иначе не работает
 		break;
 	}
 }

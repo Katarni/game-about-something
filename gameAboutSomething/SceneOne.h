@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Arrow.h"
 #include "Sheeps.h"
+#include "Creature.h"
 #include "Cat.h"
 
 void test();
@@ -12,13 +13,9 @@ void shot();
 
 void player_move();
 
-void help_me_doctor();
+void sheeps_move(Sheeps* sheep);
 
-void help_from_doctor();
-
-void sheeps_move();
-
-void arrows_move(Arrow* arrow);
+void creatures_move(Creature* cteature);
 
 void arrow_hit_target(Arrow* arrow);
 

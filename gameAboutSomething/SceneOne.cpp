@@ -2,7 +2,6 @@
 #include "Player.h"
 #include <iostream>
 #include <conio.h>
-#include "Creature.h"
 
 using namespace std;
 
@@ -12,10 +11,9 @@ int win_height = 25;
 
 Player player_one(win_width / 2, win_height / 2, 100, 2); // создание игрока
 
-Cat doctor(14, 7, "Doctor"); // создание котика
+Cat doctor(11, 6, "Doctor"); // создание котика
 
 // список действий
-enum actions { STOP, LEFT, RIGHT, DOWN, UP, SHOT, HIT, HEALTH, TEST };
 actions action = STOP;
 actions previous_action;
 
@@ -174,78 +172,13 @@ void player_move() {
 		break;
 	case HEALTH:
 		help_active = true;
-		help_me_doctor();
+		doctor.help_me_doctor(&player_one);
 		action = STOP;
 		break;
 	case TEST:
 		test();
 		action = STOP;
 		break;
-	}
-}
-
-void help_me_doctor() /* вызывается при нажатии на 'H' перемещает доктора к игроку */ {
-	if (player_one.health <= 45) {
-		doctor.coordinates_x = player_one.coordinates_x;
-		doctor.coordinates_y = player_one.coordinates_y;
-	}
-}
-
-void help_from_doctor() /* работает всегда, проверяет рядом ли с игоком, если да, то лечит. Так жe отправляет котика домой, если лечение не требуется*/ {
-	if (player_one.health >= 85) {
-		doctor.coordinates_x = 14;
-		doctor.coordinates_y = 7;
-		help_active = false;
-	}
-
-	if (doctor.coordinates_x == player_one.coordinates_x && doctor.coordinates_y == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x - 1 == player_one.coordinates_x && doctor.coordinates_y == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x + 1 == player_one.coordinates_x && doctor.coordinates_y == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x == player_one.coordinates_x && doctor.coordinates_y - 1 == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x == player_one.coordinates_x && doctor.coordinates_y + 1 == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x - 1 == player_one.coordinates_x && doctor.coordinates_y - 1 == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x + 1 == player_one.coordinates_x && doctor.coordinates_y + 1 == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x + 1 == player_one.coordinates_x && doctor.coordinates_y - 1 == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-	else if (doctor.coordinates_x - 1 == player_one.coordinates_x && doctor.coordinates_y + 1 == player_one.coordinates_y) {
-		player_one.health += 1;
-	}
-
-	if (help_active) {
-		switch (previous_action)
-		{
-		case LEFT:
-			doctor.coordinates_x = player_one.coordinates_x + 1;
-			doctor.coordinates_y = player_one.coordinates_y;
-			break;
-		case RIGHT:
-			doctor.coordinates_x = player_one.coordinates_x - 1;
-			doctor.coordinates_y = player_one.coordinates_y;
-			break;
-		case DOWN:
-			doctor.coordinates_x = player_one.coordinates_x;
-			doctor.coordinates_y = player_one.coordinates_y - 1;
-			break;
-		case UP:
-			doctor.coordinates_x = player_one.coordinates_x;
-			doctor.coordinates_y = player_one.coordinates_y + 1;
-			break;
-		}
 	}
 }
 
@@ -273,21 +206,46 @@ void sheeps_move(Sheeps* sheep) {
 	}
 }
 
-// полет стрел
-void arrows_move(Arrow* arrow) {
-	switch (arrow->direction) {
-	case LEFT:
-		arrow->x += 1; // здесь все правильно, иначе не работает
-		break;
-	case RIGHT:
-		arrow->y -= 1; // здесь все правильно, иначе не работает
-		break;
-	case UP:
-		arrow->x -= 1; // здесь не работает
-		break;
-	case DOWN:
-		arrow->y += 1; // здесь все правильно, иначе не работает
-		break;
+// передвижение существ
+void creatures_move(Creature* creature) {
+	int is_move = rand() % 100;
+	if (is_move <= 20) {
+		if (creature->x >= player_one.coordinates_x) {
+			if (creature->y >= player_one.coordinates_y) {
+				if (creature->x - player_one.coordinates_x <= creature->y - player_one.coordinates_y) {
+					creature->x -= 1;
+				}
+				else {
+					creature->y -= 1;
+				}
+			}
+			else {
+				if (creature->x - player_one.coordinates_x <= player_one.coordinates_y - creature->y) {
+					creature->x -= 1;
+				}
+				else {
+					creature->y += 1;
+				}
+			}
+		}
+		else {
+			if (creature->y >= player_one.coordinates_y) {
+				if (player_one.coordinates_x - creature->x <= creature->y - player_one.coordinates_y) {
+					creature->x += 1;
+				}
+				else {
+					creature->y -= 1;
+				}
+			}
+			else {
+				if (player_one.coordinates_x - creature->x <= player_one.coordinates_y - creature->y) {
+					creature->x += 1;
+				}
+				else {
+					creature->y += 1;
+				}
+			}
+		}
 	}
 }
 
@@ -585,7 +543,7 @@ void draw() {
 								cout << "v";
 								break;
 							default:
-								cout << "o";
+								cout << " ";
 								break;
 							}
 							printed = true;
@@ -650,7 +608,7 @@ void mechanics() {
 		}
 	}
 
-	help_from_doctor();
+	doctor.help_from_doctor(&player_one, &help_active, previous_action);
 
 	player_move();
 
@@ -670,7 +628,7 @@ void mechanics() {
 
 	for (int i = 0; i < sizeof(list_of_arrows); i++) {
 		if (list_of_arrows[i].shot) {
-			arrows_move(&list_of_arrows[i]);
+			list_of_arrows[i].arrow_move();
 		}
 	}
 }
@@ -688,7 +646,6 @@ bool main_scene() {
 }
 
 /*
-* 
 	Ошибочки:
 		* стрелы нехотят летать влево
 

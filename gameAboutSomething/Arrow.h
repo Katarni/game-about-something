@@ -6,6 +6,8 @@ struct Arrow {
 
 	void set_direction(int direction);
 
+	void arrow_move();
+
 	int x;
 	int y;
 	int damage;
