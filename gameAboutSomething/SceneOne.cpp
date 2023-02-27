@@ -20,6 +20,7 @@ actions action = STOP;
 actions previous_action;
 
 bool game_end = false;
+bool help_active = false;
 
 Arrow list_of_arrows[] = {
 	Arrow(), Arrow(), Arrow(),
@@ -61,17 +62,20 @@ int fences_coordinates_y[] = {
 	13, 13, 13, 13, 13, 13, 13, 13, 13, 13
 };
 
-Sheeps sheep_one(22, 11);
+Sheeps first_sheep(22, 11);
+Sheeps second_sheep(19, 12);
 
 Sheeps list_of_sheeps[] = {
-	sheep_one
+	first_sheep, second_sheep
 };
 
-/*Creature list_of_creatures[] = {
-	Creature(70, 15, 10),
-	Creature(55, 5, 10),
-	Creature(30, 20, 10)
-};*/
+Creature first_creature(70, 15);
+Creature second_creature(55, 5);
+Creature third_creature(30, 20);
+
+Creature list_of_creatures[] = {
+	first_creature, second_creature, third_creature
+};
 
 void test() {
 	player_one.health = 25;
@@ -169,6 +173,7 @@ void player_move() {
 		action = STOP;
 		break;
 	case HEALTH:
+		help_active = true;
 		help_me_doctor();
 		action = STOP;
 		break;
@@ -190,6 +195,7 @@ void help_from_doctor() /* работает всегда, проверяет р�
 	if (player_one.health >= 85) {
 		doctor.coordinates_x = 14;
 		doctor.coordinates_y = 7;
+		help_active = false;
 	}
 
 	if (doctor.coordinates_x == player_one.coordinates_x && doctor.coordinates_y == player_one.coordinates_y) {
@@ -218,6 +224,28 @@ void help_from_doctor() /* работает всегда, проверяет р�
 	}
 	else if (doctor.coordinates_x - 1 == player_one.coordinates_x && doctor.coordinates_y + 1 == player_one.coordinates_y) {
 		player_one.health += 1;
+	}
+
+	if (help_active) {
+		switch (previous_action)
+		{
+		case LEFT:
+			doctor.coordinates_x = player_one.coordinates_x + 1;
+			doctor.coordinates_y = player_one.coordinates_y;
+			break;
+		case RIGHT:
+			doctor.coordinates_x = player_one.coordinates_x - 1;
+			doctor.coordinates_y = player_one.coordinates_y;
+			break;
+		case DOWN:
+			doctor.coordinates_x = player_one.coordinates_x;
+			doctor.coordinates_y = player_one.coordinates_y - 1;
+			break;
+		case UP:
+			doctor.coordinates_x = player_one.coordinates_x;
+			doctor.coordinates_y = player_one.coordinates_y + 1;
+			break;
+		}
 	}
 }
 
@@ -286,6 +314,8 @@ void arrow_hit_target(Arrow* arrow) {
 	}
 	
 	// проверки на соответсвие
+
+	// двери
 	for (int i = 0; i < 3; i++) {
 		if (doors_coordinates_x[i] == arrow->x && doors_coordinates_y[i] == arrow->y && !doors_broken[i]) {
 			arrow->x = -100;
@@ -296,6 +326,7 @@ void arrow_hit_target(Arrow* arrow) {
 		}
 	}
 	
+	// стены
 	for (int i = 0; i < 21; i++) {
 		if (walls_coordinates_x[i] == arrow->x && walls_coordinates_y[i] == arrow->y) {
 			arrow->x = -100;
@@ -305,6 +336,7 @@ void arrow_hit_target(Arrow* arrow) {
 		}
 	}
 
+	// заборы
 	for (int i = 0; i < 48; i++) {
 		if (fences_coordinates_x[i] == arrow->x && fences_coordinates_y[i] == arrow->y) {
 			arrow->x = -100;
@@ -313,7 +345,19 @@ void arrow_hit_target(Arrow* arrow) {
 			return;
 		}
 	}
+
+	// существа
+	for (int i = 0; i < 3; i++) {
+		if (list_of_creatures[i].x == arrow->x && list_of_creatures[i].y == arrow->y && !list_of_creatures[i].dead) {
+			arrow->x = -100;
+			arrow->y = -100;
+			arrow->shot = false;
+			list_of_creatures[i].health -= arrow->damage;
+			return;
+		}
+	}
 	
+	// границы
 	if (arrow->x < 1 || arrow->y < 0 || arrow->x > win_width - 1 || arrow->y > win_height - 1) {
 		arrow->x = -100;
 		arrow->y = -100;
@@ -407,7 +451,7 @@ void is_step_free() {
 
 	// Овечки
 
-	for (int j = 0; j < 1; j++) {
+	for (int j = 0; j < 2; j++) {
 		if (list_of_sheeps[j].x < 1) {
 			list_of_sheeps[j].x = 1;
 		}
@@ -501,7 +545,7 @@ void draw() {
 
 				// рисуем овечек
 				if (!printed) {
-					for (int k = 0; k < 1; k++) {
+					for (int k = 0; k < 2; k++) {
 						if (j == list_of_sheeps[k].x && i == list_of_sheeps[k].y && !list_of_sheeps[k].dead) {
 							cout << "*";
 							printed = true;
@@ -610,7 +654,7 @@ void mechanics() {
 
 	player_move();
 
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 2; i++) {
 		if (!list_of_sheeps[i].dead) {
 			sheeps_move(&list_of_sheeps[i]);
 		}
