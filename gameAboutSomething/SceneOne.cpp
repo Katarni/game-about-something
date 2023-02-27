@@ -19,6 +19,10 @@ actions previous_action;
 
 bool game_end = false;
 bool help_active = false;
+bool hit_active = false;
+bool need_help = false;
+
+unsigned free_arrows = 15;
 
 Arrow list_of_arrows[] = {
 	Arrow(), Arrow(), Arrow(),
@@ -76,7 +80,7 @@ Creature list_of_creatures[] = {
 };
 
 void test() {
-	player_one.health = 25;
+	player_one.health = 20;
 }
 
 // удар
@@ -111,30 +115,33 @@ void hit() {
 }
 
 void shot() {
-	int direction = 0;
-	switch (previous_action) 
-	{
-	case LEFT:
-		direction = -1;
-		break;
-	case RIGHT:
-		direction = 2;
-		break;
-	case DOWN:
-		direction = -2;
-		break;
-	case UP:
-		direction = 1;
-		break;
-	}
+	if (free_arrows > 0) {
+		int direction = 0;
+		switch (previous_action)
+		{
+		case RIGHT:
+			direction = 2;
+			break;
+		case DOWN:
+			direction = -2;
+			break;
+		case UP:
+			direction = 1;
+			break;
+		case LEFT:
+			direction = -1;
+			break;
+		}
 
-	for (int i = 0; i < sizeof(list_of_arrows); i++) {
-		if (!list_of_arrows[i].shot) {
-			list_of_arrows[i].shot = true;
-			list_of_arrows[i].set_direction(direction);
-			list_of_arrows[i].x = player_one.coordinates_x;
-			list_of_arrows[i].y = player_one.coordinates_y;
-			return;
+		for (int i = 0; i < sizeof(list_of_arrows); i++) {
+			if (!list_of_arrows[i].shot) {
+				free_arrows--;
+				list_of_arrows[i].shot = true;
+				list_of_arrows[i].set_direction(direction);
+				list_of_arrows[i].x = player_one.coordinates_x;
+				list_of_arrows[i].y = player_one.coordinates_y;
+				return;
+			}
 		}
 	}
 }
@@ -202,49 +209,6 @@ void sheeps_move(Sheeps* sheep) {
 		case 3:
 			sheep->y -= 1;
 			break;
-		}
-	}
-}
-
-// передвижение существ
-void creatures_move(Creature* creature) {
-	int is_move = rand() % 100;
-	if (is_move <= 20) {
-		if (creature->x >= player_one.coordinates_x) {
-			if (creature->y >= player_one.coordinates_y) {
-				if (creature->x - player_one.coordinates_x <= creature->y - player_one.coordinates_y) {
-					creature->x -= 1;
-				}
-				else {
-					creature->y -= 1;
-				}
-			}
-			else {
-				if (creature->x - player_one.coordinates_x <= player_one.coordinates_y - creature->y) {
-					creature->x -= 1;
-				}
-				else {
-					creature->y += 1;
-				}
-			}
-		}
-		else {
-			if (creature->y >= player_one.coordinates_y) {
-				if (player_one.coordinates_x - creature->x <= creature->y - player_one.coordinates_y) {
-					creature->x += 1;
-				}
-				else {
-					creature->y -= 1;
-				}
-			}
-			else {
-				if (player_one.coordinates_x - creature->x <= player_one.coordinates_y - creature->y) {
-					creature->x += 1;
-				}
-				else {
-					creature->y += 1;
-				}
-			}
 		}
 	}
 }
@@ -444,6 +408,22 @@ void is_step_free() {
 void draw() {
 	system("cls");
 
+	cout << fixed;
+	cout.precision(2);
+
+	if (need_help) {
+		system("color 04");
+	}
+	else if (hit_active) {
+		system("color 0C");
+	}
+	else if (help_active) {
+		system("color 02");
+	}
+	else {
+		system("color 07");
+	}
+
 	for (int i = 0; i < win_width; i++) /* вывод верхней границы */ {
 		cout << "_";
 	}
@@ -453,6 +433,9 @@ void draw() {
 		for (int j = 0; j < win_width + 1; j++) {
 			if (j == 0 || j == win_width) /* вывод боковых границ */ {
 				cout << "|";
+				if (j == win_width && i == 1) {
+					cout << "     Health: " << player_one.health;
+				}
 			}
 
 			else if (i == player_one.coordinates_y && j == player_one.coordinates_x) /* печать игрока */ {
@@ -511,18 +494,18 @@ void draw() {
 					}
 				}
 
-				/*
+				
 				// рисуем существ
 				if (!printed) {
 					for (int k = 0; k < 3; k++) {
 						if (j == list_of_creatures[k].x && list_of_creatures[k].y == i) {
 							if (!list_of_creatures[k].dead) {
-								cout << "M";
+								cout << "!";
 								printed = true;
 							}
 						}
 					}
-				}*/
+				}
 
 				// рисуем стрелы
 				if (!printed) {
@@ -602,6 +585,13 @@ void mechanics() {
 		game_end = true;
 	}
 
+	if (player_one.health <= 25) {
+		need_help = true;
+	}
+	else {
+		need_help = false;
+	}
+
 	for (int i = 0; i < 3; i++) {
 		if (doors_health[i] <= 0) {
 			doors_broken[i] = true;
@@ -611,6 +601,13 @@ void mechanics() {
 	doctor.help_from_doctor(&player_one, &help_active, previous_action);
 
 	player_move();
+
+	for (int i = 0; i < 3; i++) {
+		if (!list_of_creatures[i].dead) {
+			list_of_creatures[i].creatures_move(&player_one);
+			list_of_creatures[i].creatures_hit(&player_one, &hit_active);
+		}
+	}
 
 	for (int i = 0; i < 2; i++) {
 		if (!list_of_sheeps[i].dead) {

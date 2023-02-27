@@ -51,16 +51,16 @@ void Arrow::set_direction(int direction) {
 void Arrow::arrow_move() {
 	switch (this->direction) {
 	case LEFT:
-		this->x -= 1; // здесь все правильно, иначе не работает
+		this->x -= 1;
 		break;
 	case RIGHT:
-		this->x += 1; // здесь все правильно, иначе не работает
+		this->x += 1;
 		break;
 	case UP:
-		this->y -= 1; // здесь не работает
+		this->y -= 1;
 		break;
 	case DOWN:
-		this->y += 1; // здесь все правильно, иначе не работает
+		this->y += 1; 
 		break;
 	}
 }
