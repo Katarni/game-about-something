@@ -617,7 +617,7 @@ void mechanics() {
 
 	is_step_free();
 	
-	for (int i = 0; i < sizeof(list_of_arrows); i++) {
+	for (int i = 0; i < 15; i++) {
 		if (list_of_arrows[i].shot) {
 			arrow_hit_target(&list_of_arrows[i]);
 		}
