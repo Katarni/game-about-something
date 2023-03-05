@@ -133,7 +133,7 @@ void shot() {
 			break;
 		}
 
-		for (int i = 0; i < sizeof(list_of_arrows); i++) {
+		for (int i = 0; i < 15; i++) {
 			if (!list_of_arrows[i].shot) {
 				free_arrows--;
 				list_of_arrows[i].shot = true;
@@ -509,7 +509,7 @@ void draw() {
 
 				// рисуем стрелы
 				if (!printed) {
-					for (int k = 0; k < sizeof(list_of_arrows); k++) {
+					for (int k = 0; k < 15; k++) {
 						if (i == list_of_arrows[k].y && j == list_of_arrows[k].x && list_of_arrows[k].shot) {
 							switch (list_of_arrows[k].direction)
 							{
@@ -623,7 +623,7 @@ void mechanics() {
 		}
 	}
 
-	for (int i = 0; i < sizeof(list_of_arrows); i++) {
+	for (int i = 0; i < 15; i++) {
 		if (list_of_arrows[i].shot) {
 			list_of_arrows[i].arrow_move();
 		}
